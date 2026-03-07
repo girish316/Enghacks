@@ -1,63 +1,147 @@
-import Image from "next/image";
+"use client";
+
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Star } from "lucide-react";
+import { useState } from "react";
+
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const RATING = 3.4;
 
 export default function Home() {
+  const [selectedDays, setSelectedDays] = useState<Set<string>>(new Set());
+
+  const handleClick = (day: string) => {
+    setSelectedDays((prev) => {
+      const next = new Set(prev);
+      if (next.has(day)) next.delete(day);
+      else next.add(day);
+      return next;
+    });
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="min-h-screen bg-black text-white">
+      <main className="mx-auto flex max-w-6xl gap-0 py-12 px-8">
+        {/* Left column - Profile */}
+        <aside className="flex w-72 shrink-0 flex-col items-start border-r border-zinc-800 pr-8">
+          <div className="relative mb-4">
+            <Avatar className="size-28 border-2 border-zinc-700">
+              <AvatarImage src="" alt="Girish M" />
+              <AvatarFallback className="bg-zinc-800 text-zinc-400 text-2xl">
+                GM
+              </AvatarFallback>
+            </Avatar>
+          </div>
+          <h1 className="text-xl font-bold tracking-tight">Girish M</h1>
+          <p className="mb-4 text-sm text-zinc-400">
+            Software Engineering &apos;30
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <div className="flex gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-zinc-800 text-white hover:bg-zinc-700"
+            >
+              LinkedIn
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="bg-zinc-800 text-white hover:bg-zinc-700"
+            >
+              GitHub
+            </Button>
+          </div>
+          <Button
+            variant="secondary"
+            className="mt-3 w-full bg-zinc-700 text-white hover:bg-zinc-600"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            View Resume
+          </Button>
+          <div className="mt-4 flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map((i) => {
+              const fill = Math.min(1, Math.max(0, RATING - (i - 1)));
+              return (
+                <div
+                  key={i}
+                  className="relative size-5 shrink-0"
+                  aria-hidden="true"
+                >
+                  <Star className="size-5 fill-none text-zinc-500" />
+                  {fill > 0 && (
+                    <div
+                      className="absolute inset-0 overflow-hidden"
+                      style={{ width: `${fill * 100}%` }}
+                    >
+                      <Star className="size-5 fill-yellow-400 text-yellow-400" />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <p className="mt-1 text-xs text-zinc-500">
+            3.4/5 stars from 34 ratings
+          </p>
+        </aside>
+
+        {/* Right column - Content */}
+        <div className="flex-1 space-y-6 pl-8">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="space-y-4 lg:col-span-2">
+              <section>
+                <h2 className="mb-2 text-lg font-bold">Bio</h2>
+                <div className="min-h-[80px] rounded-lg bg-zinc-900 px-4 py-3 text-zinc-500">
+                  Girish is gay
+                </div>
+              </section>
+              <section>
+                <h2 className="mb-2 text-lg font-bold">
+                  Project Description
+                </h2>
+                <div className="min-h-[80px] rounded-lg bg-zinc-900 px-4 py-3 text-zinc-500">
+                  Girish is closeted
+                </div>
+              </section>
+              <section>
+                <h2 className="mb-2 text-lg font-bold">Technical Skills</h2>
+                <div className="min-h-[44px] rounded-lg bg-zinc-900 px-4 py-3 text-zinc-500">
+                  Gooning
+                </div>
+              </section>
+              <section>
+                <h2 className="mb-2 text-lg font-bold">Availability</h2>
+                <div className="flex flex-wrap gap-2">
+                  {DAYS.map((day) => (
+                    <Button
+                      key={day}
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleClick(day)}
+                      className={
+                        selectedDays.has(day)
+                          ? "bg-green-600 text-white hover:bg-green-500"
+                          : "bg-zinc-800 text-white hover:bg-zinc-700"
+                      }
+                    >
+                      {day}
+                    </Button>
+                  ))}
+                </div>
+              </section>
+            </div>
+            <section className="lg:col-span-1">
+              <h2 className="mb-2 text-lg font-bold">Project Gallery</h2>
+              <div className="aspect-square min-h-[200px] rounded-lg bg-zinc-900 flex items-center justify-center text-zinc-500">
+                What do I do here?
+              </div>
+            </section>
+          </div>
         </div>
       </main>
     </div>
