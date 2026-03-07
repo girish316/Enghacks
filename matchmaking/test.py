@@ -1,5 +1,5 @@
 import json
-
+import penConstant
 # Source: Brainstormed matchmaking algorithm by prompting ChatGPT with a first edition (sorted list based on aggregate project skilled weight)
 # Based on suggestions, revised a second edition that was ultimately used (added concept of "mandatory skills" and a skill weighting)
 
@@ -56,12 +56,12 @@ def match_applicants(data, project_id):
                     break
                 elif gap == 1:
                     if required_rating > user_rating:
-                        penalty += 0.1
+                        penalty += penConstant.UNDERQUALIFIED_PEN_REQ
                     else: # Implementation decision to slightly penalize overqualified candidates
-                        penalty += 0.03
+                        penalty += penConstant.OVERQUALIFIED_PEN
             else: 
                 if gap > 0:
-                    penalty += 0.05 * gap # Should not be excluded, but should be a penalty applied. Penalty default value is lower because not required
+                    penalty += penConstant.UNDERQUALIFIED_PEN_NON_REQ * gap # Should not be excluded, but should be a penalty applied. Penalty default value is lower because not required
 
 
             # Weighted normalized score
