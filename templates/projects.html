@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goose Collab</title>
+    <link rel="stylesheet" href="/static/projects.css">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/projects">Projects</a>
+        <a href="/profile">Profile</a>
+        <a href="/matches">Matches</a>
+    </nav>
+    <h1> Projects</h1>
+    <h2> Add a Project</h2>
+        <form action="/addProject" method="POST">
+            <label>Project Title</label>
+            <input type = "text" name = "title" placeholder="e.g. Karoke Generator" required>
+            <label>Description</label>
+            <textarea name = "description" placeholder="What are you building?" required></textarea>
+            <label>Skills Needed</label>
+            <input type = "text" name = "skills" placeholder="e.g. Python, Java, React">
+
+            <button type="submit">Create Project</button>
+        </form>
+
+
+
+
+</body>
+</html>
