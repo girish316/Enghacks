@@ -24,6 +24,9 @@ node_modules/
 
 build/
 dist/
+.next/
+.env.local
+.env.*.local
 *.egg-info/
 
 *.tmp
