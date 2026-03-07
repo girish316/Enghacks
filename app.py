@@ -1,7 +1,7 @@
-from flask import Flask
+from flask import Flask, render_template
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='client/build', static_folder='client/build/static')
 
-@app.route("/heyyy")
-def hello_world():
-    print("girish is an attractive man")
+@app.route("/")
+def index():
+    return render_template("index.html")
