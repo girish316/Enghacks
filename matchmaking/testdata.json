@@ -1,0 +1,142 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Alice Chen",
+      "skills": {
+        "Python": 5,
+        "React": 3,
+        "SQL": 4,
+        "Figma": 2
+      },
+      "github": "github.com/alicechen",
+      "linkedin": "linkedin.com/in/alicechen"
+    },
+    {
+      "id": 2,
+      "name": "Brian Patel",
+      "skills": {
+        "Python": 4,
+        "React": 4,
+        "SQL": 2,
+        "Figma": 1
+      },
+      "github": "github.com/bpatel",
+      "linkedin": "linkedin.com/in/bpatel"
+    },
+    {
+      "id": 3,
+      "name": "Sara Johnson",
+      "skills": {
+        "Python": 2,
+        "React": 5,
+        "SQL": 3,
+        "Figma": 4
+      },
+      "github": "github.com/sjohnson",
+      "linkedin": "linkedin.com/in/sjohnson"
+    },
+    {
+      "id": 4,
+      "name": "David Kim",
+      "skills": {
+        "Python": 5,
+        "React": 2,
+        "SQL": 5,
+        "Figma": 1
+      },
+      "github": "github.com/dkim",
+      "linkedin": "linkedin.com/in/dkim"
+    },
+    {
+      "id": 5,
+      "name": "Maria Gonzalez",
+      "skills": {
+        "Python": 3,
+        "React": 4,
+        "SQL": 2,
+        "Figma": 5
+      },
+      "github": "github.com/mgonzalez",
+      "linkedin": "linkedin.com/in/mgonzalez"
+    }
+  ],
+
+  "projects": [
+    {
+      "id": 101,
+      "title": "AI Resume Analyzer",
+      "description": "Tool that analyzes resumes and suggests improvements.",
+      "required_skills": [
+        {
+          "skill": "Python",
+          "required_rating": 4,
+          "weight": 5,
+          "mandatory": true
+        },
+        {
+          "skill": "SQL",
+          "required_rating": 3,
+          "weight": 3,
+          "mandatory": false
+        },
+        {
+          "skill": "React",
+          "required_rating": 2,
+          "weight": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "title": "Collaborative Coding Platform",
+      "description": "Web platform where developers can match and build projects together.",
+      "required_skills": [
+        {
+          "skill": "React",
+          "required_rating": 4,
+          "weight": 5,
+          "mandatory": true
+        },
+        {
+          "skill": "Python",
+          "required_rating": 3,
+          "weight": 4,
+          "mandatory": true
+        },
+        {
+          "skill": "SQL",
+          "required_rating": 2,
+          "weight": 2,
+          "mandatory": false
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "title": "UI Portfolio Generator",
+      "description": "Tool that generates developer portfolios automatically.",
+      "required_skills": [
+        {
+          "skill": "React",
+          "required_rating": 3,
+          "weight": 4,
+          "mandatory": true
+        },
+        {
+          "skill": "Figma",
+          "required_rating": 3,
+          "weight": 4,
+          "mandatory": false
+        },
+        {
+          "skill": "Python",
+          "required_rating": 2,
+          "weight": 2,
+          "mandatory": false
+        }
+      ]
+    }
+  ]
+}
