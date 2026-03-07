@@ -12,6 +12,13 @@ import { useState } from "react";
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const RATING = 3.4;
 
+// Testing Variables
+const LINKEDINTEMP = "https://www.linkedin.com/in/williamhgates/";
+const GITHUBTEMP = "https://github.com/peppy";
+const userID = 1
+
+
+
 export default function Home() {
   const [selectedDays, setSelectedDays] = useState<Set<string>>(new Set());
 
@@ -24,6 +31,13 @@ export default function Home() {
     });
   };
 
+  const handleLinkedinRedirect = () => {
+    window.location.href = LINKEDINTEMP;
+  }
+
+  const handleGithubRedirect = () => {
+    window.location.href = GITHUBTEMP;
+  }
   return (
     <div className="min-h-screen bg-black text-white">
       <main className="mx-auto flex max-w-6xl gap-0 py-12 px-8">
@@ -46,6 +60,7 @@ export default function Home() {
               variant="secondary"
               size="sm"
               className="bg-zinc-800 text-white hover:bg-zinc-700"
+              onClick={handleLinkedinRedirect}
             >
               LinkedIn
             </Button>
@@ -53,6 +68,7 @@ export default function Home() {
               variant="secondary"
               size="sm"
               className="bg-zinc-800 text-white hover:bg-zinc-700"
+              onClick={handleGithubRedirect}
             >
               GitHub
             </Button>
