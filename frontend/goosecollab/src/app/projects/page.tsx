@@ -1,7 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useState, useEffect } from "react";
+import { getCurrentUser, updateUserProfile } from "@/lib/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -9,6 +11,8 @@ type Project = {
   title: string;
   description: string;
   skills?: string[] | string;
+  id?: string;
+  createdBy?: string;
 };
 
 export default function ProjectsPage() {
@@ -19,8 +23,16 @@ export default function ProjectsPage() {
   const [skills, setSkills] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
 
   useEffect(() => {
+    // Get current user
+    getCurrentUser()
+      .then((user) => setCurrentUser(user.uid))
+      .catch(() => setCurrentUser(null));
+
+    // Load projects
     fetch(`${API_URL}/api/projects`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => setProjects(Array.isArray(data) ? data : []))
@@ -28,10 +40,11 @@ export default function ProjectsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
+    setSuccess(null);
     try {
       const res = await fetch(`${API_URL}/api/projects`, {
         method: "POST",
@@ -49,6 +62,22 @@ export default function ProjectsPage() {
       }
       const project = await res.json();
       setProjects((prev) => [...prev, project]);
+
+      // Add project to user's profile
+      if (currentUser) {
+        try {
+          const currentUserData = await getCurrentUser();
+          const updatedProjects = [...(currentUserData.projects || []), title.trim()];
+          await updateUserProfile(currentUser, {
+            projects: updatedProjects,
+          });
+        } catch (err) {
+          console.error("Failed to update user projects:", err);
+          // Don't fail the whole operation, just log the error
+        }
+      }
+
+      setSuccess("✅ Project created and added to your profile!");
       setTitle("");
       setDescription("");
       setSkills("");
@@ -62,10 +91,25 @@ export default function ProjectsPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       <main className="mx-auto max-w-3xl px-6 py-12">
-        <h1 className="text-2xl font-bold">Projects</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">Projects</h1>
+          {currentUser && (
+            <Link href={`/profile/${currentUser}`}>
+              <Button className="bg-blue-600 hover:bg-blue-700 text-sm">
+                👁️ View Your Profile
+              </Button>
+            </Link>
+          )}
+        </div>
 
         <section className="mt-8">
           <h2 className="mb-4 text-lg font-semibold text-zinc-300">Add a Project</h2>
+          {error && (
+            <p className="mb-4 text-sm text-red-400">❌ {error}</p>
+          )}
+          {success && (
+            <p className="mb-4 text-sm text-green-400">{success}</p>
+          )}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
               <label className="mb-1 block text-sm text-zinc-400">Project Title</label>
@@ -99,7 +143,6 @@ export default function ProjectsPage() {
                 className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-4 py-2 text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:outline-none"
               />
             </div>
-            {error && <p className="text-sm text-red-400">{error}</p>}
             <Button
               type="submit"
               disabled={submitting}

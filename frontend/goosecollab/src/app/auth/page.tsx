@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { createUser, signIn, getCurrentUser, updateUserProfile, type User } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -377,6 +378,15 @@ export default function AuthPage() {
               >
                 {loading ? "Saving..." : "Save Profile"}
               </Button>
+
+              <Link href={`/profile/${user.uid}`} className="w-full">
+                <Button
+                  type="button"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-sm"
+                >
+                  👁️ View Full Profile
+                </Button>
+              </Link>
             </form>
 
             <button

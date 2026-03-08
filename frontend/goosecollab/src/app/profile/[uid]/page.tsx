@@ -39,6 +39,29 @@ const DAY_TO_KEY: Record<string, string> = {
   Sat: "saturday",
 };
 
+// Mock demo user data
+const DEMO_USER: User = {
+  uid: "demo",
+  username: "john_smith",
+  program: "Computer Science",
+  year: "3rd",
+  bio: "Passionate about web development and machine learning. Love building collaborative projects with creative teams.",
+  projectIdea: "AI-powered project matching platform that uses ML to connect developers with complementary skills",
+  skills: ["React", "Python", "TypeScript", "Firebase", "Node.js"],
+  linkedin: "https://linkedin.com/in/johnsmith",
+  github: "https://github.com/johnsmith",
+  resume: "https://example.com/resume.pdf",
+  availability: {
+    sunday: 1,
+    monday: 1,
+    tuesday: 1,
+    wednesday: 1,
+    thursday: 1,
+    friday: 1,
+    saturday: 0,
+  },
+};
+
 function availabilityToSet(av?: Record<string, number>): Set<string> {
   if (!av) return new Set();
   const keyToDay: Record<string, string> = {
@@ -77,6 +100,14 @@ export default function ProfilePage() {
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    // Use demo data if uid is "demo"
+    if (uid === "demo") {
+      setUser(DEMO_USER);
+      setSelectedDays(availabilityToSet(DEMO_USER.availability));
+      setLoading(false);
+      return;
+    }
+
     fetch(`${API_URL}/api/user/${uid}`, { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error("User not found");
@@ -98,6 +129,11 @@ export default function ProfilePage() {
   }, []);
 
   const handleSave = () => {
+    if (uid === "demo") {
+      setSaveMessage("Demo profile cannot be edited");
+      return;
+    }
+    
     setSaving(true);
     setSaveMessage(null);
     fetch(`${API_URL}/api/user/${uid}`, {
