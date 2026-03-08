@@ -40,7 +40,7 @@ export default function ProjectsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
@@ -156,17 +156,35 @@ export default function ProjectsPage() {
             <ul className="space-y-4">
               {projects.map((p, i) => (
                 <li
-                  key={i}
-                  className="rounded-lg border border-zinc-800 bg-zinc-900 p-4"
+                  key={p.id ?? i}
+                  className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 flex items-start justify-between"
                 >
-                  <h3 className="font-medium">{p.title}</h3>
-                  <p className="mt-1 text-sm text-zinc-400">{p.description}</p>
-                  {p.skills && (
-                    <p className="mt-2 text-xs text-zinc-500">
-                      Skills:{" "}
-                      {Array.isArray(p.skills) ? p.skills.join(", ") : p.skills}
-                    </p>
-                  )}
+                  <div>
+                    <h3 className="font-medium">{p.title}</h3>
+                    <p className="mt-1 text-sm text-zinc-400">{p.description}</p>
+                    {p.skills && (
+                      <p className="mt-2 text-xs text-zinc-500">
+                        Skills:{" "}
+                        {Array.isArray(p.skills) ? p.skills.join(", ") : p.skills}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="ml-4 bg-zinc-800 text-white hover:bg-zinc-700"
+                    onClick={async () => {
+                      if (!currentUser) return;
+                      try {
+                        await updateUserProfile(currentUser, { projectIdea: p.description });
+                        setSuccess(`✅ "${p.title}" set as your main project!`);
+                      } catch (err) {
+                        setError("Failed to update main project: " + (err instanceof Error ? err.message : "Unknown error"));
+                      }
+                    }}
+                  >
+                    Save as Main Project
+                  </Button>
                 </li>
               ))}
             </ul>
