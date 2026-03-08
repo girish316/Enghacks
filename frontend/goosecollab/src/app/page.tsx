@@ -10,6 +10,12 @@ export default function Home() {
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Link
+            href="/auth"
+            className="rounded-lg bg-blue-600 px-6 py-3 text-white hover:bg-blue-700 font-semibold"
+          >
+            🧪 Test Dashboard
+          </Link>
+          <Link
             href="/projects"
             className="rounded-lg bg-zinc-800 px-6 py-3 text-white hover:bg-zinc-700"
           >

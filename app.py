@@ -4,10 +4,14 @@ from flask_cors import CORS
 import firebase_admin
 from firebase_admin import credentials, auth, firestore
 from werkzeug.security import generate_password_hash, check_password_hash
+import uuid
 
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)  # Enable CORS for frontend development
+
+# Set secret key for session management
+app.secret_key = 'temp-key'
 
 cred = credentials.Certificate("pkey.json")
 firebase_admin.initialize_app(cred)
@@ -45,6 +49,7 @@ def api_adduser():
         password = data.get("password", "").strip()
         program = data.get("program", "").strip()
         year = data.get("year", "").strip()
+        email = data.get("email", "").strip()
 
         if not username or not password:
             return jsonify({"error": "Username and password required"}), 400
@@ -53,22 +58,29 @@ def api_adduser():
         if user_doc.exists:
             return jsonify({"error": "Username already exists"}), 400
 
-        db.collection('users').document(username).set(
-            {
-                "username": username,
-                "password": generate_password_hash(password),
-                "program": program,
-                "year": year,
-                "projects": [],
-                "bio": "",
-                "projectIdea": "",
-                "skills": [],
-                "availability": {},
-                "linkedin": "",
-                "github": "",
-                "resume": "",
-            }
-        )
+        # Create new user document with metadata
+        user_data = {
+            "username": username,
+            "password": generate_password_hash(password),
+            "program": program,
+            "year": year,
+            "email": email,
+            "projects": [],
+            "bio": "",
+            "projectIdea": "",
+            "skills": [],
+            "availability": {},
+            "linkedin": "",
+            "github": "",
+            "resume": "",
+            "createdAt": firestore.SERVER_TIMESTAMP,
+            "updatedAt": firestore.SERVER_TIMESTAMP,
+            "userId": str(uuid.uuid4()),  # Unique user ID
+            "isActive": True,
+        }
+        
+        # Save to Firebase
+        db.collection('users').document(username).set(user_data)
 
         session["current_user"] = username
         return jsonify({"message": "User created successfully", "uid": username}), 201
@@ -96,6 +108,8 @@ def api_editprofile(uid):
             update_data["year"] = data["year"].strip()
         if "program" in data:
             update_data["program"] = data["program"].strip()
+        if "email" in data:
+            update_data["email"] = data["email"].strip()
         if "skills" in data:
             if isinstance(data["skills"], list):
                 update_data["skills"] = data["skills"]
@@ -119,6 +133,10 @@ def api_editprofile(uid):
         if "resume" in data:
             update_data["resume"] = data["resume"].strip()
 
+        # Add updated timestamp
+        update_data["updatedAt"] = firestore.SERVER_TIMESTAMP
+
+        # Save to Firebase with merge=True to preserve existing fields
         db.collection("users").document(uid).set(update_data, merge=True)
         
         # Fetch and return updated user data
@@ -161,6 +179,38 @@ def api_logout():
     """Sign out user"""
     session.pop("current_user", None)
     return jsonify({"message": "Logged out successfully"}), 200
+
+# Get all users from Firestore (admin/matching purposes)
+@app.route("/api/users", methods=["GET"])
+def get_all_users():
+    """Get all users from Firestore (public profiles only)"""
+    try:
+        docs = db.collection("users").stream()
+        users = []
+        for doc in docs:
+            user_data = doc.to_dict()
+            user_data["uid"] = doc.id
+            # Remove sensitive data
+            user_data.pop("password", None)
+            users.append(user_data)
+        return jsonify(users), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# Delete user account
+@app.route("/api/user/<uid>", methods=["DELETE"])
+def delete_user(uid):
+    """Delete user account"""
+    try:
+        current_user = session.get("current_user")
+        if uid != current_user:
+            return jsonify({"error": "Invalid access"}), 403
+        
+        db.collection("users").document(uid).delete()
+        session.pop("current_user", None)
+        return jsonify({"message": "User deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 # Get currently logged in user API endpoint
 @app.route("/api/user/current", methods=["GET"])

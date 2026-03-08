@@ -47,6 +47,7 @@ export interface User {
   username: string;
   program: string;
   year: string;
+  email?: string;
   bio: string;
   projectIdea: string;
   skills: string[];
@@ -55,6 +56,10 @@ export interface User {
   linkedin: string;
   github: string;
   resume: string;
+  userId?: string;
+  isActive?: boolean;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 export interface AuthResponse {
@@ -85,6 +90,7 @@ export async function createUser(data: {
   password: string;
   program: string;
   year: string;
+  email?: string;
 }): Promise<AuthResponse> {
   return apiCall("/api/user/create", {
     method: "POST",
@@ -124,6 +130,22 @@ export async function updateUserProfile(
   return apiCall(`/api/user/${uid}`, {
     method: "PUT",
     body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Get all users (public profiles)
+ */
+export async function getAllUsers(): Promise<User[]> {
+  return apiCall("/api/users");
+}
+
+/**
+ * Delete user account
+ */
+export async function deleteUser(uid: string): Promise<{ message: string }> {
+  return apiCall(`/api/user/${uid}`, {
+    method: "DELETE",
   });
 }
 
