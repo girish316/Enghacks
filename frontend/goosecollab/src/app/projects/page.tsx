@@ -93,13 +93,6 @@ export default function ProjectsPage() {
       <main className="mx-auto max-w-3xl px-6 py-12">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Projects</h1>
-          {currentUser && (
-            <Link href={`/profile/${currentUser}`}>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-sm">
-                👁️ View Your Profile
-              </Button>
-            </Link>
-          )}
         </div>
 
         <section className="mt-8">
